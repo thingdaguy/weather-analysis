@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnam Map + Weather (Open-Meteo)</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Qt WebChannel (tùy chọn) -->
+    <script src="qrc:///qtwebchannel/qwebchannel.js" defer></script>
+
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .map-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            z-index: 500;
+            font-family: sans-serif;
+            border-left: 4px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div class="map-info" id="coords">📌 Click vào bản đồ để xem thời tiết</div>
+
+<script>
+/* =========================
+   FETCH WEATHER – OPEN METEO
+========================= */
+async function fetchWeather(lat, lng) {
+    const url =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${lat}&longitude=${lng}` +
+        `&current_weather=true` +
+        `&hourly=precipitation` +
+        `&daily=temperature_2m_max,temperature_2m_min` +
+        `&timezone=auto`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.current_weather || !data.daily) {
+            console.error("Open-Meteo error:", data);
+            return null;
+        }
+
+        return {
+            temp: data.current_weather.temperature,          // °C
+            wind: data.current_weather.windspeed,            // km/h
+            precipitation: data.hourly.precipitation[0],    // mm
+            temp_max: data.daily.temperature_2m_max[0],      // °C
+            temp_min: data.daily.temperature_2m_min[0]       // °C
+        };
+    } catch (err) {
+        console.error("Fetch Open-Meteo failed:", err);
+        return null;
+    }
+}
+
+/* =========================
+   INIT MAP
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+
+    const vnBounds = L.latLngBounds(
+    [8.0, 101.5],  // south-west corner
+    [23.5, 115.0]  // north-east corner including Spratly
+    );
+
+     const map = L.map("map", {
+        center: [16.0, 108.0],
+        zoom: 6,
+        minZoom: 6,
+        maxZoom: 18,
+        maxBounds: vnBounds,
+        maxBoundsViscosity: 1.0,
+        preferCanvas: true
+    });
+
+const hoangSaLabel = L.divIcon({
+  className: 'text-label',
+  html: 'Hoàng Sa',
+  iconSize: [100, 20],
+  iconAnchor: [50, 10] 
+});
+L.marker([16.5, 112.3], { icon: hoangSaLabel, interactive: false }).addTo(map);
+
+const truongSaLabel = L.divIcon({
+  className: 'text-label',
+  html: 'Trường Sa',
+  iconSize: [100, 20],
+  iconAnchor: [50, 10]
+});
+L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
+
+
+   
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution: "&copy; OpenStreetMap contributors",
+            maxZoom: 19,
+            bounds: vnBounds
+        }
+    ).addTo(map);
+
+    const redIcon = L.icon({
+        iconUrl:
+            "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+        shadowUrl:
+            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+    });
+
+    let marker = null;
+
+    // Qt bridge
+    if (window.qt) {
+        new QWebChannel(qt.webChannelTransport, channel => {
+            window.mapBridge = channel.objects.pywebview;
+        });
+    }
+
+    /* =========================
+       MAP CLICK
+    ========================= */
+    map.on("click", async (e) => {
+        if (!vnBounds.contains(e.latlng)) return;
+
+        const lat = +e.latlng.lat.toFixed(4);
+        const lng = +e.latlng.lng.toFixed(4);
+
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng], { icon: redIcon }).addTo(map);
+
+        document.getElementById("coords").innerHTML =
+            `📍 ${lat}, ${lng} | Đang lấy dữ liệu...`;
+
+        const w = await fetchWeather(lat, lng);
+
+        let html = `<b>📍 ${lat}, ${lng}</b><hr>`;
+
+        if (w) {
+            html += `
+                🌡️ Nhiệt độ hiện tại: ${w.temp} °C<br>
+                🔺 Cao nhất: ${w.temp_max} °C<br>
+                🔻 Thấp nhất: ${w.temp_min} °C<br>
+                🌧️ Lượng mưa: ${w.precipitation} mm<br>
+                🌬️ Gió: ${w.wind} km/h
+            `;
+            document.getElementById("coords").innerHTML =
+                `🌡️ ${w.temp}°C | 🌬️ ${w.wind} km/h`;
+        } else {
+            html += "❌ Không lấy được dữ liệu thời tiết";
+        }
+
+        marker.bindPopup(html).openPopup();
+
+        if (window.mapBridge) {
+            window.mapBridge.on_map_click(lat, lng);
+        }
+    });
+
+    map.fitBounds(vnBounds);
+});
+</script>
+
+</body>
+</html>
