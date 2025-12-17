@@ -178,7 +178,7 @@ L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
         marker.bindPopup(html).openPopup();
 
         if (window.mapBridge) {
-            window.mapBridge.on_map_click(lat, lng);
+            window.mapBridge.on_map_click(lat, lng, JSON.stringify(w));
         }
     });
 

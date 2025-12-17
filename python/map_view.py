@@ -10,25 +10,30 @@ from PyQt6.QtWebChannel import QWebChannel
 from PyQt6.QtCore import QUrl, pyqtSignal, QObject, pyqtSlot
 from pathlib import Path
 from PyQt6.QtWebEngineCore import QWebEngineSettings
+import json
 
 class MapBridge(QObject):
     """Bridge object for communication between Python and JavaScript"""
 
-    map_clicked = pyqtSignal(float, float)
+    map_clicked = pyqtSignal(float, float, object)
 
     def __init__(self):
         super().__init__()
 
-    # --- SỬA 2: Thêm decorator @pyqtSlot để JS có thể gọi hàm này ---
-    # Phải khai báo rõ kiểu dữ liệu (float, float)
-    @pyqtSlot(float, float)
-    def on_map_click(self, lat: float, lon: float):
-        """
-        Called when user clicks on the map
-        Receives latitude and longitude from JavaScript
-        """
-        print(f"Bridge received click: {lat}, {lon}") # Log để debug
-        self.map_clicked.emit(lat, lon)
+    # --- SỬA QUAN TRỌNG: Đổi 'object' thành 'str' ---
+    @pyqtSlot(float, float, str)
+    def on_map_click(self, lat: float, lon: float, data_json: str):
+        print(f"Bridge received click: {lat}, {lon}")
+        
+        # --- XỬ LÝ: Parse chuỗi JSON thành Dict ---
+        try:
+            data = json.loads(data_json)
+        except json.JSONDecodeError:
+            print("Lỗi: Không thể đọc dữ liệu JSON từ JS")
+            data = {}
+
+        print("Weather data:", data)
+        self.map_clicked.emit(lat, lon, data)
 
 
 class MapView(QWidget):

@@ -38,7 +38,7 @@ class WeatherForecastApp(QMainWindow):
         bridge = self.map_view.get_bridge()
         bridge.map_clicked.connect(self.on_map_clicked)
 
-    def on_map_clicked(self, lat: float, lon: float):
+    def on_map_clicked(self, lat: float, lon: float,  data: str):
         # In ít log hơn để đỡ lag console
         print(f"Clicked: {lat}, {lon}") 
         self.statusBar().showMessage(f"Selected: {lat}, {lon}")
