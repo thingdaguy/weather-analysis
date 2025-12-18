@@ -9,15 +9,20 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Qt WebChannel (tùy chọn) -->
+    <!-- Qt WebChannel (optional) -->
     <script src="qrc:///qtwebchannel/qwebchannel.js" defer></script>
 
     <style>
-        html, body, #map {
-            height: 100%;
-            width: 100%;
+        html, body {
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #map {
+            width: 100vw;
+            height: 100vh;
         }
 
         .map-info {
@@ -33,6 +38,15 @@
             z-index: 500;
             font-family: sans-serif;
             border-left: 4px solid #e74c3c;
+        }
+
+        /* Text label for islands */
+        .text-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #c0392b;
+            white-space: nowrap;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -58,20 +72,16 @@ async function fetchWeather(lat, lng) {
         const res = await fetch(url);
         const data = await res.json();
 
-        if (!data.current_weather || !data.daily) {
-            console.error("Open-Meteo error:", data);
-            return null;
-        }
+        if (!data.current_weather || !data.daily) return null;
 
         return {
-            temp: data.current_weather.temperature,          // °C
-            wind: data.current_weather.windspeed,            // km/h
-            precipitation: data.hourly.precipitation[0],    // mm
-            temp_max: data.daily.temperature_2m_max[0],      // °C
-            temp_min: data.daily.temperature_2m_min[0]       // °C
+            temp: data.current_weather.temperature,
+            wind: data.current_weather.windspeed,
+            precipitation: data.hourly.precipitation[0],
+            temp_max: data.daily.temperature_2m_max[0],
+            temp_min: data.daily.temperature_2m_min[0]
         };
-    } catch (err) {
-        console.error("Fetch Open-Meteo failed:", err);
+    } catch {
         return null;
     }
 }
@@ -81,49 +91,42 @@ async function fetchWeather(lat, lng) {
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
 
-    const vnBounds = L.latLngBounds(
-    [8.0, 101.5],  // south-west corner
-    [23.5, 115.0]  // north-east corner including Spratly
-    );
-
-     const map = L.map("map", {
-        center: [16.0, 108.0],
+    const map = L.map("map", {
+        // Shift Vietnam slightly LEFT to reserve right-side panel space
+        center: [16.0, 110.5],
         zoom: 6,
-        minZoom: 6,
+        minZoom: 3,
         maxZoom: 18,
-        maxBounds: vnBounds,
-        maxBoundsViscosity: 1.0,
         preferCanvas: true
     });
 
-const hoangSaLabel = L.divIcon({
-  className: 'text-label',
-  html: 'Hoàng Sa',
-  iconSize: [100, 20],
-  iconAnchor: [50, 10] 
-});
-L.marker([16.5, 112.3], { icon: hoangSaLabel, interactive: false }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+        maxZoom: 19
+    }).addTo(map);
 
-const truongSaLabel = L.divIcon({
-  className: 'text-label',
-  html: 'Trường Sa',
-  iconSize: [100, 20],
-  iconAnchor: [50, 10]
-});
-L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
+    /* =========================
+       ISLAND LABELS
+    ========================= */
+    const hoangSaLabel = L.divIcon({
+        className: "text-label",
+        html: "Hoàng Sa",
+        iconSize: [100, 20],
+        iconAnchor: [50, 10]
+    });
+    L.marker([16.5, 112.3], { icon: hoangSaLabel, interactive: false }).addTo(map);
 
+    const truongSaLabel = L.divIcon({
+        className: "text-label",
+        html: "Trường Sa",
+        iconSize: [100, 20],
+        iconAnchor: [50, 10]
+    });
+    L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
 
-   
-
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            attribution: "&copy; OpenStreetMap contributors",
-            maxZoom: 19,
-            bounds: vnBounds
-        }
-    ).addTo(map);
-
+    /* =========================
+       MARKER STYLE
+    ========================= */
     const redIcon = L.icon({
         iconUrl:
             "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -135,7 +138,9 @@ L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
 
     let marker = null;
 
-    // Qt bridge
+    /* =========================
+       QT BRIDGE
+    ========================= */
     if (window.qt) {
         new QWebChannel(qt.webChannelTransport, channel => {
             window.mapBridge = channel.objects.pywebview;
@@ -146,8 +151,6 @@ L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
        MAP CLICK
     ========================= */
     map.on("click", async (e) => {
-        if (!vnBounds.contains(e.latlng)) return;
-
         const lat = +e.latlng.lat.toFixed(4);
         const lng = +e.latlng.lng.toFixed(4);
 
@@ -163,11 +166,11 @@ L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
 
         if (w) {
             html += `
-                🌡️ Nhiệt độ hiện tại: ${w.temp} °C<br>
-                🔺 Cao nhất: ${w.temp_max} °C<br>
-                🔻 Thấp nhất: ${w.temp_min} °C<br>
-                🌧️ Lượng mưa: ${w.precipitation} mm<br>
-                🌬️ Gió: ${w.wind} km/h
+                🌡️ ${w.temp} °C<br>
+                🔺 Max: ${w.temp_max} °C<br>
+                🔻 Min: ${w.temp_min} °C<br>
+                🌧️ ${w.precipitation} mm<br>
+                🌬️ ${w.wind} km/h
             `;
             document.getElementById("coords").innerHTML =
                 `🌡️ ${w.temp}°C | 🌬️ ${w.wind} km/h`;
@@ -181,8 +184,6 @@ L.marker([10.0, 114.0], { icon: truongSaLabel, interactive: false }).addTo(map);
             window.mapBridge.on_map_click(lat, lng, JSON.stringify(w));
         }
     });
-
-    map.fitBounds(vnBounds);
 });
 </script>
 

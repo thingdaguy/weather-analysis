@@ -9,8 +9,9 @@ from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
-    QSizePolicy, QWidget, QFrame, QScrollArea
+    QSizePolicy, QWidget, QFrame, QScrollArea, QApplication
 )
+from PyQt6.QtGui import QScreen
 from cycler import cycler
 import numpy as np
 import mplcyberpunk
@@ -47,7 +48,25 @@ class CoordinateAnalysisWindow(QDialog):
         self.lon = lon
 
         self.setWindowTitle(f"30-day Weather Analysis @ {lat:.3f}, {lon:.3f}")
-        self.setMinimumSize(1200, 800)
+        
+        # Get screen geometry and position window on right half
+        screen = QApplication.primaryScreen()
+        screen_geometry = screen.geometry()
+        screen_width = screen_geometry.width()
+        screen_height = screen_geometry.height()
+        
+        # Calculate right half position and size
+        window_width = screen_width // 2
+        window_height = screen_height
+        window_x = screen_width // 2
+        window_y = 0
+        
+        # Set window geometry to right half of screen
+        self.setGeometry(window_x, window_y, window_width, window_height)
+        self.setMinimumSize(window_width, 600)
+        
+        # Make window non-modal so it doesn't block the main window
+        self.setWindowFlags(Qt.WindowType.Window)
 
         # Apply dark theme to the dialog
         self.setStyleSheet("""

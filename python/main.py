@@ -13,7 +13,8 @@ os.environ["QT_ANGLE_PLATFORM"] = "d3d11" # Hoặc "warp" nếu máy cực yếu
 # -----------------------------------------------------------------------
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtGui import QScreen
 from analyze import ProvinceAnalysisWindow, CoordinateAnalysisWindow
 from map_view import MapView
 
@@ -27,8 +28,6 @@ class WeatherForecastApp(QMainWindow):
 
     def setup_ui(self):
         self.setWindowTitle("Vietnam Weather Forecast")
-        self.setGeometry(100, 100, 1200, 700)
-        self.setMinimumSize(QSize(800, 600))
         self.map_view = MapView(self)
         self.setCentralWidget(self.map_view)
         # Bỏ style sheet phức tạp nếu không cần thiết để load nhanh hơn
@@ -41,7 +40,6 @@ class WeatherForecastApp(QMainWindow):
     def on_map_clicked(self, lat: float, lon: float,  data: str):
         # In ít log hơn để đỡ lag console
         print(f"Clicked: {lat}, {lon}") 
-        self.statusBar().showMessage(f"Selected: {lat}, {lon}")
         if hasattr(self, "coord_window") and self.coord_window is not None:
             try:
                 self.coord_window.close()
@@ -58,12 +56,10 @@ def main():
     app.setApplicationName("Vietnam Weather Forecast")
     
     window = WeatherForecastApp()
-    window.show()
+    window.showFullScreen()  # Show in fullscreen mode
 
     sys.exit(app.exec())
 
-# Cần import thêm Qt để chỉnh HighDpi (tùy chọn)
-from PyQt6.QtCore import Qt 
 
 if __name__ == "__main__":
     main()
