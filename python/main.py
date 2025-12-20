@@ -39,7 +39,7 @@ class WeatherForecastApp(QMainWindow):
 
     def on_map_clicked(self, lat: float, lon: float,  data: str):
         # In ít log hơn để đỡ lag console
-        print(f"Clicked: {lat}, {lon}") 
+    
         if hasattr(self, "coord_window") and self.coord_window is not None:
             try:
                 self.coord_window.close()

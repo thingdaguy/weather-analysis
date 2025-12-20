@@ -131,6 +131,7 @@ class CoordinateAnalysisWindow(QDialog):
         self.temp_figure = Figure(figsize=(12, 6), dpi=100)
         self.temp_figure.patch.set_facecolor('#1e1e1e')
         self.temp_canvas = FigureCanvas(self.temp_figure)
+        self.temp_canvas.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.temp_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.temp_canvas.setMinimumHeight(400)
         main_layout.addWidget(self.temp_canvas)
