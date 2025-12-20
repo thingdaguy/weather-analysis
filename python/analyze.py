@@ -1,9 +1,12 @@
+# analyze.py
 import datetime
-import matplotlib.dates as mdates
-from typing import List, Tuple
 import pandas as pd
 import requests
-import matplotlib.pyplot as plt 
+import numpy as np
+import matplotlib.pyplot as plt
+import mplcyberpunk
+from typing import Tuple, Optional
+
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
@@ -11,21 +14,15 @@ from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
     QSizePolicy, QWidget, QFrame, QScrollArea, QApplication
 )
-from PyQt6.QtGui import QScreen
-from cycler import cycler
-import numpy as np
-import mplcyberpunk
 
 plt.style.use("cyberpunk")
 
 class ProvinceAnalysisWindow(QDialog):
-    """Placeholder window for province click (kept for compatibility)."""
-
+    """Placeholder window for province click."""
     def __init__(self, province_name: str, parent=None):
         super().__init__(parent)
         self.setWindowTitle(f"Analysis - {province_name}")
         self.setMinimumSize(400, 300)
-
         layout = QVBoxLayout()
         layout.addWidget(QLabel(f"Analysis for {province_name} (not implemented)"))
         self.setLayout(layout)
@@ -34,474 +31,248 @@ class ProvinceAnalysisWindow(QDialog):
 
 class CoordinateAnalysisWindow(QDialog):
     """
-    Shows a 30-day weather history for a lat/lng point
-    using Open-Meteo archive API and matplotlib embedded in PyQt.
-    Displays:
-    - Summary cards: Avg Wind, Avg Temp, Total Rain
-    - Temperature chart over 30 days
-    - Rain and Snow precipitation chart
+    Hiển thị thông tin thời tiết.
+    - Sử dụng 'weather_data' truyền vào để hiển thị thông tin hiện tại (Location, Cards).
+    - Sử dụng Open-Meteo API để lấy lịch sử 30 ngày cho biểu đồ.
     """
 
-    def __init__(self, lat: float, lon: float, parent=None):
+    def __init__(self, lat: float, lon: float, weather_data: Optional[dict] = None, parent=None):
         super().__init__(parent)
         self.lat = lat
         self.lon = lon
+        self.weather_data = weather_data # Lưu dữ liệu từ Map View
 
-        self.setWindowTitle(f"30-day Weather Analysis @ {lat:.3f}, {lon:.3f}")
-        
-        # Get screen geometry and position window on right half
-        screen = QApplication.primaryScreen()
-        screen_geometry = screen.geometry()
-        screen_width = screen_geometry.width()
-        screen_height = screen_geometry.height()
-        
-        # Calculate right half position and size
-        window_width = screen_width // 2
-        window_height = screen_height
-        window_x = screen_width // 2
-        window_y = 0
-        
-        # Set window geometry to right half of screen
-        self.setGeometry(window_x, window_y, window_width, window_height)
-        self.setMinimumSize(window_width, 600)
-        
-        # Make window non-modal so it doesn't block the main window
-        self.setWindowFlags(Qt.WindowType.Window)
+        # Lấy địa chỉ hiển thị từ weather_data nếu có
+        location_text = f"{lat:.3f}, {lon:.3f}"
+        if self.weather_data and 'location' in self.weather_data:
+            loc = self.weather_data['location']
+            # Ưu tiên hiển thị tên Huyện/Tỉnh hoặc Full Address
+            location_text = loc.get('full', location_text)
 
-        # Apply dark theme to the dialog
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #1e1e1e;
-            }
-        """)
-
-        # Create scroll area
+        self.setWindowTitle(f"Weather Analysis: {location_text}")
+        
+        # Setup UI cơ bản
+        self._setup_window_geometry()
+        self._setup_styles()
+        
+        # Layout chính
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setStyleSheet("""
-            QScrollArea {
-                background-color: #1e1e1e;
-                border: none;
-            }
-            QScrollBar:vertical {
-                background-color: #2d2d2d;
-                width: 12px;
-                border-radius: 6px;
-            }
-            QScrollBar::handle:vertical {
-                background-color: #4a4a4a;
-                border-radius: 6px;
-                min-height: 20px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background-color: #5a5a5a;
-            }
-        """)
-
-        # Content widget for scroll area
         content_widget = QWidget()
-        main_layout = QVBoxLayout()
-        main_layout.setSpacing(20)
-        main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout = QVBoxLayout()
+        self.main_layout.setSpacing(20)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
 
-        # Info label
-        self.info_label = QLabel("Loading 30-day weather data...")
+        # 1. Info Label (Hiển thị địa chỉ cụ thể)
+        self.info_label = QLabel(f"Analyzing: {location_text}")
+        self.info_label.setWordWrap(True) 
         self.info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.info_label.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: bold;
-                color: #e0e0e0;
-                padding: 12px;
-                background-color: #2d2d2d;
-                border-radius: 8px;
-                border: 1px solid #3d3d3d;
-            }
+            QLabel { font-size: 16px; font-weight: bold; color: #51cf66; padding: 12px; 
+            background-color: #2d3d2d; border-radius: 8px; border: 1px solid #3d4d3d; }
         """)
-        main_layout.addWidget(self.info_label)
+        self.main_layout.addWidget(self.info_label)
 
-        # Summary cards container
+        # 2. Summary Cards Container
         self.summary_container = QWidget()
         self.summary_layout = QHBoxLayout()
         self.summary_layout.setSpacing(15)
         self.summary_container.setLayout(self.summary_layout)
-        main_layout.addWidget(self.summary_container)
+        self.main_layout.addWidget(self.summary_container)
 
-        # Temperature chart (first chart) - increased height
-        self.temp_figure = Figure(figsize=(12, 6), dpi=100)
-        self.temp_figure.patch.set_facecolor('#1e1e1e')
-        self.temp_canvas = FigureCanvas(self.temp_figure)
-        self.temp_canvas.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.temp_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.temp_canvas.setMinimumHeight(400)
-        main_layout.addWidget(self.temp_canvas)
+        # 3. Charts
+        self.temp_canvas = self._add_chart_widget()
+        self.precip_canvas = self._add_chart_widget()
+        self.wind_canvas = self._add_chart_widget()
 
-        # Precipitation chart (second chart) - increased height
-        self.precip_figure = Figure(figsize=(12, 6), dpi=100)
-        self.precip_figure.patch.set_facecolor('#1e1e1e')
-        self.precip_canvas = FigureCanvas(self.precip_figure)
-        self.precip_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.precip_canvas.setMinimumHeight(400)
-        main_layout.addWidget(self.precip_canvas)
-
-        # Wind chart (third chart) - increased height
-        self.wind_figure = Figure(figsize=(12, 6), dpi=100)
-        self.wind_figure.patch.set_facecolor('#1e1e1e')
-        self.wind_canvas = FigureCanvas(self.wind_figure)
-        self.wind_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.wind_canvas.setMinimumHeight(400)
-        main_layout.addWidget(self.wind_canvas)
-
-        content_widget.setLayout(main_layout)
-        content_widget.setStyleSheet("background-color: #1e1e1e;")
+        content_widget.setLayout(self.main_layout)
         scroll_area.setWidget(content_widget)
 
-        # Set scroll area as main layout
         dialog_layout = QVBoxLayout()
         dialog_layout.setContentsMargins(0, 0, 0, 0)
         dialog_layout.addWidget(scroll_area)
         self.setLayout(dialog_layout)
 
-        # Fetch data and draw charts synchronously
-        self._load_and_plot()
+        # Thực thi logic
+        self._display_data()
         self.show()
 
-    def _get_date_range(self) -> Tuple[str, str]:
-        """Return (start_date, end_date) strings for the last 30 days."""
-        end = datetime.date.today() - datetime.timedelta(days=1)
-        start = end - datetime.timedelta(days=29)  # 30 days total (inclusive)
-        return start.isoformat(), end.isoformat()
+    def _setup_window_geometry(self):
+        screen = QApplication.primaryScreen()
+        geo = screen.geometry()
+        w, h = geo.width(), geo.height()
+        self.setGeometry(w // 2, 0, w // 2, h)
+        self.setMinimumSize(w // 2, 600)
+        self.setWindowFlags(Qt.WindowType.Window)
 
-    def _fetch_weather_df(self) -> pd.DataFrame:
-        """
-        Fetch 30 days of daily weather data from Open-Meteo
-        and return a pandas DataFrame.
-        """
-        start_date, end_date = self._get_date_range()
+    def _setup_styles(self):
+        self.setStyleSheet("""
+            QDialog, QWidget { background-color: #1e1e1e; }
+            QScrollArea { border: none; }
+            QScrollBar:vertical { background-color: #2d2d2d; width: 12px; border-radius: 6px; }
+            QScrollBar::handle:vertical { background-color: #4a4a4a; border-radius: 6px; min-height: 20px; }
+        """)
 
-        params = {
-            "latitude": self.lat,
-            "longitude": self.lon,
-            "start_date": start_date,
-            "end_date": end_date,
-            "daily": (
-                "temperature_2m_max,"
-                "temperature_2m_min,"
-                "temperature_2m_mean,"
-                "rain_sum,"
-                "snowfall_sum,"
-                "windspeed_10m_max"
-            ),
-            "timezone": "auto",
-        }
+    def _add_chart_widget(self):
+        fig = Figure(figsize=(12, 6), dpi=100)
+        fig.patch.set_facecolor('#1e1e1e')
+        canvas = FigureCanvas(fig)
+        canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        canvas.setMinimumHeight(350)
+        self.main_layout.addWidget(canvas)
+        return canvas
 
-        url = "https://archive-api.open-meteo.com/v1/archive"
+    def _display_data(self):
+        """Logic chính để hiển thị dữ liệu"""
+        
+        # --- PHẦN 1: Hiển thị Summary Cards từ weather_data (nếu có) ---
+        # Dữ liệu này đến từ Map View (tức thì)
+        current_temp = "N/A"
+        current_wind = "N/A"
+        current_rain = "N/A"
 
+        if self.weather_data and 'weather' in self.weather_data:
+            w = self.weather_data['weather']
+            current_temp = f"{w.get('temp', 0)} °C"
+            current_wind = f"{w.get('wind', 0)} km/h"
+            # Lưu ý: precipitation trong JSON có thể là mưa hiện tại
+            current_rain = f"{w.get('precipitation', 0)} mm"
+        
+        # Tạo cards ngay lập tức
+        self._update_summary_cards(current_wind, current_temp, current_rain)
+
+        # --- PHẦN 2: Tải lịch sử 30 ngày để vẽ biểu đồ ---
+        # Vì data từ map chỉ là snapshot hiện tại, ta vẫn cần fetch history
         try:
-            resp = requests.get(url, params=params, timeout=15)
-            resp.raise_for_status()
-            data = resp.json()
+            df = self._fetch_weather_history()
+            
+            # Vẽ biểu đồ
+            self._plot_temperature_chart(df)
+            self._plot_precipitation_chart(df)
+            self._plot_wind_chart(df)
 
-            daily = data.get("daily", {})
-            if not daily:
-                raise ValueError("Missing daily data")
+            # Nếu không có weather_data từ map, ta có thể update cards bằng trung bình lịch sử
+            if not self.weather_data:
+                 self._update_summary_cards(
+                     f"{df['wind_max'].mean():.1f} km/h (Avg)",
+                     f"{df['tmean'].mean():.1f} °C (Avg)",
+                     f"{df['rain'].mean():.1f} mm (Avg)"
+                 )
 
-            df = pd.DataFrame({
-                "date": pd.to_datetime(daily["time"]),
-                "tmax": daily["temperature_2m_max"],
-                "tmin": daily["temperature_2m_min"],
-                "tmean": daily.get("temperature_2m_mean", []),
-                "rain": daily["rain_sum"],
-                "snow": daily["snowfall_sum"],
-                "wind_max": daily.get("windspeed_10m_max", []),
-            })
+        except Exception as exc:
+            print(f"Chart Error: {exc}")
+            # Không làm chết app, chỉ in lỗi vào console hoặc hiện label lỗi nhỏ
 
-            # Calculate mean temperature if not available
-            if len(df["tmean"]) == 0 or all(pd.isna(df["tmean"])):
-                df["tmean"] = (df["tmax"] + df["tmin"]) / 2
-
-            # Safety: replace None → 0 for precipitation and wind
-            df[["rain", "snow"]] = df[["rain", "snow"]].fillna(0.0)
-            df["wind_max"] = df["wind_max"].fillna(0.0)
-
-            return df
-
-        except Exception as exc:  # noqa: BLE001
-            raise RuntimeError(f"Failed to fetch data from Open-Meteo: {exc}") from exc
-
-    def _create_summary_card(self, icon: str, value_with_unit: str, label: str, icon_color: str) -> QFrame:
-        """Create a summary card widget with icon, value, and label."""
-        card = QFrame()
-        card.setFrameShape(QFrame.Shape.StyledPanel)
-        card.setStyleSheet("""
-            QFrame {
-                background-color: #2d2d2d;
-                border-radius: 12px;
-                border: 1px solid #3d3d3d;
-                padding: 25px;
-            }
-        """)
-        
-        card_layout = QVBoxLayout()
-        card_layout.setSpacing(10)
-        card_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        
-        # Icon label
-        icon_label = QLabel(icon)
-        icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        icon_label.setStyleSheet(f"""
-            QLabel {{
-                font-size: 52px;
-                background: transparent;
-            }}
-        """)
-        card_layout.addWidget(icon_label)
-        
-        # Value with unit label
-        value_label = QLabel(value_with_unit)
-        value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        value_label.setStyleSheet("""
-            QLabel {
-                font-size: 32px;
-                font-weight: bold;
-                color: #ffffff;
-                background: transparent;
-            }
-        """)
-        card_layout.addWidget(value_label)
-        
-        # Label text
-        label_widget = QLabel(label)
-        label_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label_widget.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                color: #b0b0b0;
-                background: transparent;
-            }
-        """)
-        card_layout.addWidget(label_widget)
-        
-        card.setLayout(card_layout)
-        return card
-
-    def _load_and_plot(self) -> None:
-        """Load data and create all visualizations."""
-        try:
-            df = self._fetch_weather_df()
-        except Exception as exc:  # noqa: BLE001
-            print(exc)
-            self.info_label.setText(f"Error: {str(exc)}")
-            self.info_label.setStyleSheet("""
-                QLabel {
-                    font-size: 14px;
-                    font-weight: bold;
-                    color: #ff6b6b;
-                    padding: 12px;
-                    background-color: #3d2d2d;
-                    border-radius: 8px;
-                    border: 1px solid #4d3d3d;
-                }
-            """)
-            return
-
-        # Calculate summary statistics
-        avg_wind = df["wind_max"].mean()
-        avg_temp = df["tmean"].mean()
-        avg_rain = df["rain"].mean()
-
-        # Clear existing summary cards
+    def _update_summary_cards(self, wind, temp, rain):
+        # Clear cũ
         for i in reversed(range(self.summary_layout.count())):
             self.summary_layout.itemAt(i).widget().setParent(None)
 
-        # Create and add summary cards
-        wind_card = self._create_summary_card(
-            "🌬️",
-            f"{avg_wind:.1f} km/h",
-            "Avg Wind",
-            "#3498db"
-        )
-        temp_card = self._create_summary_card(
-            "🌡️",
-            f"{avg_temp:.1f} °C",
-            "Avg Temp",
-            "#e74c3c"
-        )
-        rain_card = self._create_summary_card(
-            "🌧️",
-            f"{avg_rain:.1f} mm",
-            "Avg Rain",
-            "#2ecc71"
-        )
+        self.summary_layout.addWidget(self._create_card("🌬️", wind, "Wind", "#3498db"))
+        self.summary_layout.addWidget(self._create_card("🌡️", temp, "Temp", "#e74c3c"))
+        self.summary_layout.addWidget(self._create_card("🌧️", rain, "Rain", "#2ecc71"))
 
-        self.summary_layout.addWidget(wind_card)
-        self.summary_layout.addWidget(temp_card)
-        self.summary_layout.addWidget(rain_card)
+    def _create_card(self, icon, value, label, color):
+        card = QFrame()
+        card.setStyleSheet("QFrame { background-color: #2d2d2d; border-radius: 12px; border: 1px solid #3d3d3d; padding: 20px; }")
+        l = QVBoxLayout()
+        l.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        lb_icon = QLabel(icon)
+        lb_icon.setStyleSheet("font-size: 40px; background: transparent;")
+        lb_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        lb_val = QLabel(value)
+        lb_val.setStyleSheet("font-size: 24px; font-weight: bold; color: #ffffff; background: transparent;")
+        lb_val.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        lb_lbl = QLabel(label)
+        lb_lbl.setStyleSheet(f"font-size: 14px; color: {color}; background: transparent;")
+        lb_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # Plot temperature chart
-        self._plot_temperature_chart(df)
+        l.addWidget(lb_icon)
+        l.addWidget(lb_val)
+        l.addWidget(lb_lbl)
+        card.setLayout(l)
+        return card
 
-        # Plot precipitation chart
-        self._plot_precipitation_chart(df)
+    # --- Fetching & Plotting Logic (Giữ nguyên logic cũ nhưng gọn hơn) ---
+    def _fetch_weather_history(self) -> pd.DataFrame:
+        end = datetime.date.today() - datetime.timedelta(days=1)
+        start = end - datetime.timedelta(days=29)
+        
+        url = "https://archive-api.open-meteo.com/v1/archive"
+        params = {
+            "latitude": self.lat, "longitude": self.lon,
+            "start_date": start.isoformat(), "end_date": end.isoformat(),
+            "daily": "temperature_2m_max,temperature_2m_min,temperature_2m_mean,rain_sum,snowfall_sum,windspeed_10m_max",
+            "timezone": "auto"
+        }
+        
+        resp = requests.get(url, params=params, timeout=10)
+        resp.raise_for_status()
+        daily = resp.json().get("daily", {})
+        
+        df = pd.DataFrame({
+            "date": pd.to_datetime(daily["time"]),
+            "tmax": daily["temperature_2m_max"],
+            "tmin": daily["temperature_2m_min"],
+            "tmean": daily.get("temperature_2m_mean", []),
+            "rain": daily["rain_sum"],
+            "snow": daily["snowfall_sum"],
+            "wind_max": daily.get("windspeed_10m_max", []),
+        })
+        
+        if df["tmean"].isnull().all(): df["tmean"] = (df["tmax"] + df["tmin"]) / 2
+        df = df.fillna(0)
+        return df
 
-        # Plot wind chart
-        self._plot_wind_chart(df)
-
-        # Update info label
-        self.info_label.setText(
-            f"30-day weather analysis for {self.lat:.3f}°N, {self.lon:.3f}°E"
-        )
-        self.info_label.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: bold;
-                color: #51cf66;
-                padding: 12px;
-                background-color: #2d3d2d;
-                border-radius: 8px;
-                border: 1px solid #3d4d3d;
-            }
-        """)
-
-    def _plot_temperature_chart(self, df: pd.DataFrame) -> None:
-        """Plot temperature chart over 30 days."""
-        ax = self.temp_figure.add_subplot(111)
+    def _plot_temperature_chart(self, df):
+        fig = self.temp_canvas.figure
+        ax = fig.add_subplot(111)
         ax.clear()
-        ax.set_facecolor('#1e1e1e')
-
+        
         x = np.arange(len(df))
-        tick_step = max(1, len(df) // 6)
-        ticks = x[::tick_step]
-        labels = df["date"].dt.strftime("%d %b")[::tick_step]
-
-        ax.set_xticks(ticks)
-        ax.set_xticklabels(labels, rotation=45, ha="right", color='#e0e0e0')
-
-        # Plot max, min, and mean temperatures
-        ax.plot(x, df["tmax"], label="Max Temp", linewidth=2.5, marker='o', markersize=5, color="#ff6b6b")
-        ax.plot(x, df["tmin"], label="Min Temp", linewidth=2.5, marker='o', markersize=5, color="#4dabf7")
-        ax.plot(x, df["tmean"], label="Avg Temp", linewidth=2.5, marker='s', markersize=4, color="#51cf66", linestyle='--')
-
-        # Fill area between max and min
-        ax.fill_between(x, df["tmin"], df["tmax"], alpha=0.15, color="#4dabf7")
-
-        ax.set_ylabel("Temperature (°C)", fontsize=12, fontweight='bold', color='#e0e0e0')
-        ax.set_xlabel("Date", fontsize=12, fontweight='bold', color='#e0e0e0')
-        ax.set_title("Temperature Over 30 Days", fontsize=14, fontweight='bold', pad=20, color='#ffffff')
-        ax.legend(loc='best', framealpha=0.9, facecolor='#2d2d2d', edgecolor='#3d3d3d', labelcolor='#e0e0e0')
-        ax.grid(True, alpha=0.2, linestyle='--', color='#4a4a4a')
-        ax.tick_params(colors='#b0b0b0')
-        ax.spines['bottom'].set_color('#4a4a4a')
-        ax.spines['top'].set_color('#4a4a4a')
-        ax.spines['right'].set_color('#4a4a4a')
-        ax.spines['left'].set_color('#4a4a4a')
-
-        self.temp_figure.subplots_adjust(
-            top=0.88,     # more space for title
-            bottom=0.01,
-            left=0.08,
-            right=0.97
-        )
+        labels = df["date"].dt.strftime("%d/%m")
+        
+        ax.plot(x, df["tmax"], label="Max", color="#ff6b6b", marker='o')
+        ax.plot(x, df["tmin"], label="Min", color="#4dabf7", marker='o')
+        ax.fill_between(x, df["tmin"], df["tmax"], alpha=0.1, color="#4dabf7")
+        
+        self._style_chart(ax, "Temperature History (°C)", x, labels)
         self.temp_canvas.draw()
 
-    def _plot_precipitation_chart(self, df: pd.DataFrame) -> None:
-        """Plot rain and snow precipitation chart."""
-        ax = self.precip_figure.add_subplot(111)
+    def _plot_precipitation_chart(self, df):
+        fig = self.precip_canvas.figure
+        ax = fig.add_subplot(111)
         ax.clear()
-        ax.set_facecolor('#1e1e1e')
-
+        
         x = np.arange(len(df))
-        tick_step = max(1, len(df) // 6)
-        ticks = x[::tick_step]
-        labels = df["date"].dt.strftime("%d %b")[::tick_step]
-
-        ax.set_xticks(ticks)
-        ax.set_xticklabels(labels, rotation=45, ha="right", color='#e0e0e0')
-
-        # Plot rain bars
-        rain_bar = ax.bar(
-            x,
-            df["rain"],
-            label="Rain (mm)",
-            color="#4dabf7",
-            alpha=0.85,
-            edgecolor="#339af0",
-            linewidth=1.2
-        )
-
-        # Plot snow bars on top
-        ax.bar(
-            x,
-            df["snow"],
-            bottom=df["rain"],
-            label="Snow (mm)",
-            color="#adb5bd",
-            alpha=0.9,
-            edgecolor="#868e96",
-            linewidth=1.2
-        )
-
-        ax.set_ylim(bottom=0)
-        ax.set_ylabel("Precipitation (mm)", fontsize=12, fontweight='bold', color='#e0e0e0')
-        ax.set_xlabel("Date", fontsize=12, fontweight='bold', color='#e0e0e0')
-        ax.set_title("Daily Precipitation (Rain + Snow)", fontsize=14, fontweight='bold', pad=20, color='#ffffff')
-        ax.legend(loc='best', framealpha=0.9, facecolor='#2d2d2d', edgecolor='#3d3d3d', labelcolor='#e0e0e0')
-        ax.grid(True, alpha=0.2, linestyle='--', axis='y', color='#4a4a4a')
-        ax.tick_params(colors='#b0b0b0')
-        ax.spines['bottom'].set_color('#4a4a4a')
-        ax.spines['top'].set_color('#4a4a4a')
-        ax.spines['right'].set_color('#4a4a4a')
-        ax.spines['left'].set_color('#4a4a4a')
-
-        self.precip_figure.subplots_adjust(
-            top=0.88,     # more space for title
-            bottom=0.01,
-            left=0.08,
-            right=0.97
-        )
+        ax.bar(x, df["rain"], label="Rain", color="#4dabf7")
+        ax.bar(x, df["snow"], bottom=df["rain"], label="Snow", color="#adb5bd")
+        
+        self._style_chart(ax, "Precipitation (mm)", x, df["date"].dt.strftime("%d/%m"))
         self.precip_canvas.draw()
 
-    def _plot_wind_chart(self, df: pd.DataFrame) -> None:
-        """Plot wind speed chart over 30 days."""
-        ax = self.wind_figure.add_subplot(111)
+    def _plot_wind_chart(self, df):
+        fig = self.wind_canvas.figure
+        ax = fig.add_subplot(111)
         ax.clear()
-        ax.set_facecolor('#1e1e1e')
-
+        
         x = np.arange(len(df))
-        tick_step = max(1, len(df) // 6)
-        ticks = x[::tick_step]
-        labels = df["date"].dt.strftime("%d %b")[::tick_step]
-
-        ax.set_xticks(ticks)
-        ax.set_xticklabels(labels, rotation=45, ha="right", color='#e0e0e0')
-
-        # Plot wind speed as bars
-        ax.bar(
-            x,
-            df["wind_max"],
-            label="Max Wind Speed",
-            color="#4dabf7",
-            alpha=0.85,
-            edgecolor="#339af0",
-            linewidth=1.2
-        )
-
-        ax.set_ylim(bottom=0)
-        ax.set_ylabel("Wind Speed (km/h)", fontsize=12, fontweight='bold', color='#e0e0e0')
-        ax.set_xlabel("Date", fontsize=12, fontweight='bold', color='#e0e0e0')
-        ax.set_title("Wind Speed Over 30 Days", fontsize=14, fontweight='bold', pad=20, color='#ffffff')
-        ax.legend(loc='best', framealpha=0.9, facecolor='#2d2d2d', edgecolor='#3d3d3d', labelcolor='#e0e0e0')
-        ax.grid(True, alpha=0.2, linestyle='--', axis='y', color='#4a4a4a')
-        ax.tick_params(colors='#b0b0b0')
-        ax.spines['bottom'].set_color('#4a4a4a')
-        ax.spines['top'].set_color('#4a4a4a')
-        ax.spines['right'].set_color('#4a4a4a')
-        ax.spines['left'].set_color('#4a4a4a')
-
-        self.wind_figure.subplots_adjust(
-            top=0.88,     # more space for title
-            bottom=0.01,
-            left=0.08,
-            right=0.97
-        )
+        ax.bar(x, df["wind_max"], label="Wind Max", color="#3498db")
+        
+        self._style_chart(ax, "Wind Speed (km/h)", x, df["date"].dt.strftime("%d/%m"))
         self.wind_canvas.draw()
+
+    def _style_chart(self, ax, title, x, labels):
+        ax.set_title(title, color='white', pad=20)
+        ax.set_facecolor('#1e1e1e')
+        ax.grid(True, alpha=0.2, linestyle='--')
+        
+        tick_step = max(1, len(x) // 6)
+        ax.set_xticks(x[::tick_step])
+        ax.set_xticklabels(labels[::tick_step], rotation=45, color='#b0b0b0')
+        ax.tick_params(colors='#b0b0b0')
+        for spine in ax.spines.values(): spine.set_color('#4a4a4a')
+        ax.legend(facecolor='#2d2d2d', labelcolor='#e0e0e0')
