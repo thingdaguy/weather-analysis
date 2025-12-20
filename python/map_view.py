@@ -23,6 +23,7 @@ class MapBridge(QObject):
         try:
             # Parse chuỗi JSON thành Dictionary Python
             data = json.loads(data_json)
+            print(data)
         except json.JSONDecodeError:
             print("Lỗi: Không thể đọc dữ liệu JSON từ JS")
             data = {}

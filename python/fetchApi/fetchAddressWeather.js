@@ -45,27 +45,33 @@ async function fetchWeather(lat, lng) {
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${lat}&longitude=${lng}` +
     `&current_weather=true` +
-    `&hourly=precipitation` +
-    `&daily=temperature_2m_max,temperature_2m_min` +
+    `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum` +
     `&timezone=auto`;
 
   try {
     const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP error");
+
     const data = await res.json();
 
-    if (!data.current_weather || !data.daily) return null;
+    if (!data.current_weather || !data.daily) {
+      console.error("Missing weather fields", data);
+      return null;
+    }
 
     return {
-      temp: data.current_weather.temperature,
-      wind: data.current_weather.windspeed,
-      precipitation: data.hourly.precipitation[0],
-      temp_max: data.daily.temperature_2m_max[0],
-      temp_min: data.daily.temperature_2m_min[0],
+      temp: data.current_weather.temperature ?? null,
+      wind: data.current_weather.windspeed ?? null,
+      precipitation: data.daily.precipitation_sum?.[0] ?? 0,
+      temp_max: data.daily.temperature_2m_max?.[0] ?? null,
+      temp_min: data.daily.temperature_2m_min?.[0] ?? null,
     };
-  } catch {
+  } catch (err) {
+    console.error("fetchWeather failed:", err);
     return null;
   }
 }
+
 
 async function getLocationWeather(lat, lng) {
   const [address, weather] = await Promise.all([

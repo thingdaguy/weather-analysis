@@ -64,7 +64,7 @@ class CoordinateAnalysisWindow(QDialog):
         self.main_layout.setContentsMargins(20, 20, 20, 20)
 
         # 1. Info Label (Hiển thị địa chỉ cụ thể)
-        self.info_label = QLabel(f"Analyzing: {location_text}")
+        self.info_label = QLabel(f"Địa chỉ: {location_text}")
         self.info_label.setWordWrap(True) 
         self.info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.info_label.setStyleSheet("""
