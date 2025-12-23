@@ -5,3 +5,7 @@ numpy
 pandas
 requests
 mplcyberpunk
+seaborn
+scikit-learn
+ipykernel
+joblib
