@@ -1,7 +1,17 @@
-PyQt6
-PyQt6-WebEngine
+# --- Giao diện Desktop (Core) ---
+# Giữ nguyên version từ file cũ để đảm bảo ổn định
+PyQt6==6.10.1
+PyQt6-WebEngine==6.10.0
+
+# --- Xử lý dữ liệu & Biểu đồ ---
 matplotlib
 numpy
 pandas
 requests
 mplcyberpunk
+
+# --- Backend API & Machine Learning ---
+flask
+flask-cors
+scikit-learn
+joblib
