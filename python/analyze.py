@@ -15,9 +15,10 @@ from PyQt6.QtGui import QScreen
 from cycler import cycler
 import numpy as np
 import mplcyberpunk
-
+from weather_ml.rain_classifier import RainClassifier
 plt.style.use("cyberpunk")
-
+from weather_ml.anomaly_detector import WeatherAnomalyDetector
+from weather_ml.temp_predictor import TempPredictor
 class ProvinceAnalysisWindow(QDialog):
     """Placeholder window for province click (kept for compatibility)."""
 
@@ -308,7 +309,24 @@ class CoordinateAnalysisWindow(QDialog):
         avg_wind = df["wind_max"].mean()
         avg_temp = df["tmean"].mean()
         avg_rain = df["rain"].mean()
+        # ML : rain_classifier
+        clf = RainClassifier()
+        clf.train(df)
+        rain_status = clf.predict(
+            avg_temp,
+            avg_wind,
+            avg_rain
+        )
+        # ML : anomaly_detector
+        detector = WeatherAnomalyDetector()
+        df = detector.fit_predict(df)
+        # ML : temp_predictor
+        predictor = TempPredictor()
+        predictor.train(df["tmean"].tolist())
 
+        tomorrow_temp = predictor.predict_next(
+            df["tmean"].tolist()[-7:]
+        )
         # Clear existing summary cards
         for i in reversed(range(self.summary_layout.count())):
             self.summary_layout.itemAt(i).widget().setParent(None)
