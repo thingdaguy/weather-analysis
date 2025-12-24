@@ -38,7 +38,7 @@ Client ↔ REST API ↔ Server ↔ ML Engine ↔ Data Storage
 
 ## 📂 Project Structure
 
-
+'''text
 Python/
 ├── Client/                 # Client-side data acquisition
 │   ├── fetchApi/           # API fetching & data retrieval
