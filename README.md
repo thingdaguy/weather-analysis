@@ -140,23 +140,23 @@ Model Evaluation
 
 Performance is evaluated using metrics such as accuracy and loss.
 
-🧠 Machine Learning
+## 🧠 Machine Learning
 ```
   # Supported tasks:
 
-  ## Classification
+   Classification
 
-  ## Regression
+   Regression
 
-  ## Predictive analytics
+   Predictive analytics
 
-  ## Model files are stored in:
+   Model files are stored in:
 
       server/models/
 
 ```
 
-🎯 Purpose & Key Features
+## Purpose & Key Features
 ```
   ⭐ Purpose (Tác dụng của dự án)
   ```
