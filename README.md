@@ -289,13 +289,3 @@ python main.py
     
   """
 """
----
-
-## 🔮 Future Improvements
-
-- 🚢 Docker deployment
-- 📄 Swagger API documentation
-- ⏱️ Scheduled pipelines
-- 📊 Monitoring & logging
-
----
