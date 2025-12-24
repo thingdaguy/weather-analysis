@@ -64,40 +64,40 @@ Python/
 
 ````
 ---
-# Step 1: Clone the Repository
+## Step 1: Clone the Repository
 
 python -m venv venv
 
-## Windows
+# Windows
 .\venv\Scripts\activate
 
-## macOS / Linux
+# macOS / Linux
 
 source venv/bin/activate
 
 ---
 
-# Step 2: Environment Setup
+## Step 2: Environment Setup
 
 python -m venv venv
 
-## Windows
+# Windows
 
 .\venv\Scripts\activate
 
-## macOS / Linux
+# macOS / Linux
 
 source venv/bin/activate
 
 ---
 
-# Step 3: Install Dependencies
+## Step 3: Install Dependencies
 
 pip install -r requirements.txt
 
 ---
 
-# Step 4: Run the System
+## Step 4: Run the System
 ```
 Start Server (Backend & ML Engine)
 cd server
