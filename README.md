@@ -38,7 +38,7 @@ Client ↔ REST API ↔ Server ↔ ML Engine ↔ Data Storage
 
 ## 📂 Project Structure
 
-'''text
+```
 Python/
 ├── Client/                 # Client-side data acquisition
 │   ├── fetchApi/           # API fetching & data retrieval
@@ -50,7 +50,7 @@ Python/
 │   ├── models/             # Trained ML models
 │   └── test_model.ipynb    # Model testing & validation notebook
 └── README.md               # Project documentation
-'''
+```
 ---
 🛠 Installation & Setup
 """
