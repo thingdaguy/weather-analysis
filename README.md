@@ -114,31 +114,31 @@ python main.py
 ---
 ## ⚙️ System Workflow
 
-Data Collection
-
-Client fetches data from external APIs.
-
-Raw data is sent to the Server.
-
-Data Storage
-
-Raw data is stored in server/data/raw/.
-
-Data Preprocessing
-
-Cleaning, normalization, and feature engineering.
-
-Processed data is saved in server/data/processed/.
-
-Model Training
-
-Models are trained using processed data.
-
-Trained models are saved for reuse.
-
-Model Evaluation
-
-Performance is evaluated using metrics such as accuracy and loss.
+      Data Collection
+      
+      Client fetches data from external APIs.
+      
+      Raw data is sent to the Server.
+      
+      Data Storage
+      
+      Raw data is stored in server/data/raw/.
+      
+      Data Preprocessing
+      
+      Cleaning, normalization, and feature engineering.
+      
+      Processed data is saved in server/data/processed/.
+      
+      Model Training
+      
+      Models are trained using processed data.
+      
+      Trained models are saved for reuse.
+      
+      Model Evaluation
+      
+      Performance is evaluated using metrics such as accuracy and loss.
 
 ## 🧠 Machine Learning
 ```
@@ -158,24 +158,24 @@ Performance is evaluated using metrics such as accuracy and loss.
 
 ## Purpose & Key Features
 ```
-  ⭐ Purpose (Tác dụng của dự án)
+  # ⭐ Purpose (Tác dụng của dự án)
   ```
-  # This project provides a complete end-to-end machine learning pipeline, helping users to:
-
-  # Automate data collection, processing, and analysis
-
-  # Reduce manual effort in data handling and model training
-
-  # Standardize ML workflows for learning and experimentation
-
-  # Serve as a foundation for data-driven applications
-
-  # Support academic projects, research, and real-world ML experiments
+      This project provides a complete end-to-end machine learning pipeline, helping users to:
+    
+      Automate data collection, processing, and analysis
+    
+      Reduce manual effort in data handling and model training
+    
+      Standardize ML workflows for learning and experimentation
+    
+      Serve as a foundation for data-driven applications
+    
+      Support academic projects, research, and real-world ML experiments
 
   ```
-  ⭐ Key Features (Tính năng chính)
+  # ⭐ Key Features (Tính năng chính)
   ```
-    🔹 Client-side
+    - 🔹 Client-side
     ```
     # Automated data collection from external APIs
 
@@ -186,7 +186,7 @@ Performance is evaluated using metrics such as accuracy and loss.
     # REST API communication
 
     ```
-    🔹 Server-side
+    - 🔹 Server-side
     ```
     # Centralized storage for raw & processed data
 
@@ -203,7 +203,7 @@ Performance is evaluated using metrics such as accuracy and loss.
     # Model persistence for reproducibility
 
     ```
-    🔹 Experimentation & Testing
+    - 🔹 Experimentation & Testing
     ```
     # Jupyter Notebook support
 
