@@ -114,31 +114,31 @@ python main.py
 ---
 ⚙️ System Workflow
 
-# Data Collection
+Data Collection
 
-# Client fetches data from external APIs.
+Client fetches data from external APIs.
 
-# Raw data is sent to the Server.
+Raw data is sent to the Server.
 
-# Data Storage
+Data Storage
 
-# Raw data is stored in server/data/raw/.
+Raw data is stored in server/data/raw/.
 
-# Data Preprocessing
+Data Preprocessing
 
-# Cleaning, normalization, and feature engineering.
+Cleaning, normalization, and feature engineering.
 
-# Processed data is saved in server/data/processed/.
+Processed data is saved in server/data/processed/.
 
-# Model Training
+Model Training
 
-# Models are trained using processed data.
+Models are trained using processed data.
 
-# Trained models are saved for reuse.
+Trained models are saved for reuse.
 
-# Model Evaluation
+Model Evaluation
 
-# Performance is evaluated using metrics such as accuracy and loss.
+Performance is evaluated using metrics such as accuracy and loss.
 
 🧠 Machine Learning
 ```
