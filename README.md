@@ -12,7 +12,7 @@ A modern PyQt6 desktop application with an interactive Leaflet map of Vietnam fo
 - Modern, clean UI design
 - Responsive and fast performance
 
-## 🎯 Project Objectives
+## Project Objectives
 
 - Automate data collection from external APIs
 - Centralize data processing and storage
@@ -21,7 +21,7 @@ A modern PyQt6 desktop application with an interactive Leaflet map of Vietnam fo
 
 ---
 
-## ⚙️ Key Features
+## Key Features
 
 - 🔄 Automated data fetching (Client-side)
 - 🧹 Data cleaning & preprocessing
@@ -30,7 +30,7 @@ A modern PyQt6 desktop application with an interactive Leaflet map of Vietnam fo
 - 💾 Model persistence for reuse
 
 
-## 🏗️ System Architecture
+## System Architecture
 
 Client ↔ REST API ↔ Server ↔ ML Engine ↔ Data Storage
 
@@ -50,7 +50,7 @@ Readme/
 │   ├── models/             # Trained ML models
 │   └── test_model.ipynb    # Model testing & validation notebook
 └── README.md               # Project documentation
-
+'''
 ---
 🛠 Installation & Setup
 """
