@@ -62,7 +62,7 @@ Python/
 
   📒 Jupyter Notebook (optional)
 
-"""
+````
 ---
 # Step 1: Clone the Repository
 
@@ -98,19 +98,19 @@ pip install -r requirements.txt
 ---
 
 # Step 4: Run the System
-"""
+```
 Start Server (Backend & ML Engine)
 cd server
 python ml_api.py
-"""
+```
 
 ---
 
-"""
+```
 Start Client (Data Acquisition)
 cd Client
 python main.py
-"""
+```
 ---
 ⚙️ System Workflow
 
@@ -141,7 +141,7 @@ python main.py
 # Performance is evaluated using metrics such as accuracy and loss.
 
 🧠 Machine Learning
-"""
+```
   # Supported tasks:
 
   ## Classification
@@ -154,12 +154,12 @@ python main.py
 
       server/models/
 
-"""
+```
 
 🎯 Purpose & Key Features
-"""
+```
   ⭐ Purpose (Tác dụng của dự án)
-  """
+  ```
   # This project provides a complete end-to-end machine learning pipeline, helping users to:
 
   # Automate data collection, processing, and analysis
@@ -172,11 +172,11 @@ python main.py
 
   # Support academic projects, research, and real-world ML experiments
 
-  """
+  ```
   ⭐ Key Features (Tính năng chính)
-  """
+  ```
     🔹 Client-side
-    """
+    ```
     # Automated data collection from external APIs
 
     # Configurable data sources and parameters
@@ -185,9 +185,9 @@ python main.py
 
     # REST API communication
 
-    """
+    ```
     🔹 Server-side
-    """
+    ```
     # Centralized storage for raw & processed data
 
     # Data preprocessing:
@@ -202,9 +202,9 @@ python main.py
 
     # Model persistence for reproducibility
 
-    """
+    ```
     🔹 Experimentation & Testing
-    """
+    ```
     # Jupyter Notebook support
 
     # Model testing and validation
@@ -212,14 +212,14 @@ python main.py
     # Performance visualization
 
     # Hyperparameter tuning
-    """
-  """
-"""
+    ```
+  ```
+```
 ---
 🧩 Project Value & Practical Benefits
-"""
+```
   🔍 Overall Impact
-  """
+  ```
     # The Data Analysis & Model Pipeline bridges the gap between raw data collection and machine learning intelligence.
 
     # It enables users to build scalable, reusable, and maintainable data systems and is suitable for:
@@ -232,9 +232,9 @@ python main.py
 
     # ML-ready backend system prototyping
 
-  """
+  ```
   🏗 Architectural Advantages
-  """
+  ```
     # Client–Server separation
 
     # Modular and extensible design
@@ -243,9 +243,9 @@ python main.py
 
     # Clear folder structure and maintainability
 
-  """
+  ```
   📊 Technologies Used
-  """
+  ```
     🐍 Python
 
     📦 Pandas / NumPy
@@ -257,9 +257,9 @@ python main.py
     🌐 REST API
 
     🔧 Git
-  """
+  ```
   🚀 Future Improvements
-  """
+  ```
     # Swagger / OpenAPI documentation
 
     # Docker-based deployment
@@ -269,9 +269,9 @@ python main.py
     # Logging and monitoring
 
     # CI/CD integration
-  """
+  ```
   🤝 Contribution
-  """
+  ```
     # Contributions are welcome:
 
     # Fork the repository
@@ -281,12 +281,12 @@ python main.py
     # Commit your changes
 
     # Open a Pull Request
-  """
+  ```
   📄 License
-  """
+  ```
     # This project is licensed under the MIT License.
 
     # You are free to use, modify, and distribute this project with attribution.
     
-  """
-"""
+  ```
+```
