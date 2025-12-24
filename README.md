@@ -1,10 +1,40 @@
-# 📊 Data Analysis & Model Pipeline
+# Vietnam Weather Forecast Desktop Application
 
-A comprehensive system that handles the **entire data lifecycle**, from automated data collection (Client-side) to data processing, machine learning model training, and evaluation (Server-side).
+A modern PyQt6 desktop application with an interactive Leaflet map of Vietnam for weather forecasting.
 
-The project is designed using a **Client–Server architecture**, ensuring scalability, modularity, and maintainability.
+## Features
+
+- Interactive Leaflet.js map displaying Vietnam
+- Click-to-select location functionality
+- Real-time coordinate display (latitude, longitude)
+- Red marker placement on map
+- Python-JavaScript communication via QWebChannel
+- Modern, clean UI design
+- Responsive and fast performance
+
+## 🎯 Project Objectives
+
+- Automate data collection from external APIs
+- Centralize data processing and storage
+- Train and evaluate machine learning models
+- Support scalable client–server architecture
 
 ---
+
+## ⚙️ Key Features
+
+- 🔄 Automated data fetching (Client-side)
+- 🧹 Data cleaning & preprocessing
+- 🧠 Machine Learning model training
+- 📈 Model evaluation & validation
+- 💾 Model persistence for reuse
+
+
+## 🏗️ System Architecture
+
+Client ↔ REST API ↔ Server ↔ ML Engine ↔ Data Storage
+
+
 
 ## 📂 Project Structure
 
@@ -20,7 +50,7 @@ Readme/
 │   ├── models/             # Trained ML models
 │   └── test_model.ipynb    # Model testing & validation notebook
 └── README.md               # Project documentation
-
+---
 🛠 Installation & Setup
 """
   # Prerequisites
@@ -32,7 +62,7 @@ Readme/
   📒 Jupyter Notebook (optional)
 
 """
-
+---
 # Step 1: Clone the Repository
 
 python -m venv venv
@@ -43,6 +73,8 @@ python -m venv venv
 ## macOS / Linux
 
 source venv/bin/activate
+
+---
 
 # Step 2: Environment Setup
 
@@ -56,9 +88,13 @@ python -m venv venv
 
 source venv/bin/activate
 
+---
+
 # Step 3: Install Dependencies
 
 pip install -r requirements.txt
+
+---
 
 # Step 4: Run the System
 """
@@ -66,12 +102,15 @@ Start Server (Backend & ML Engine)
 cd server
 python ml_api.py
 """
+
+---
+
 """
 Start Client (Data Acquisition)
 cd Client
 python main.py
 """
-
+---
 ⚙️ System Workflow
 
 # Data Collection
@@ -175,7 +214,7 @@ python main.py
     """
   """
 """
-
+---
 🧩 Project Value & Practical Benefits
 """
   🔍 Overall Impact
@@ -250,3 +289,13 @@ python main.py
     
   """
 """
+---
+
+## 🔮 Future Improvements
+
+- 🚢 Docker deployment
+- 📄 Swagger API documentation
+- ⏱️ Scheduled pipelines
+- 📊 Monitoring & logging
+
+---
