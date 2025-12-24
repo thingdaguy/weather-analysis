@@ -53,7 +53,7 @@ Python/
 ```
 ---
 🛠 Installation & Setup
-"""
+```
   # Prerequisites
 
   🐍 Python 3.8+ 
