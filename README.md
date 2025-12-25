@@ -53,8 +53,9 @@ Python/
 ```
 ---
 🛠 Installation & Setup
-```
 # Prerequisites
+
+```
 
   🐍 Python 3.8+ 
 
@@ -68,10 +69,10 @@ Python/
 
 python -m venv venv
 
-# Windows
+## Windows
 .\venv\Scripts\activate
 
-# macOS / Linux
+## macOS / Linux
 
 source venv/bin/activate
 
@@ -81,11 +82,11 @@ source venv/bin/activate
 
 python -m venv venv
 
-# Windows
+## Windows
 
 .\venv\Scripts\activate
 
-# macOS / Linux
+## macOS / Linux
 
 source venv/bin/activate
 
@@ -120,8 +121,6 @@ python main.py
       
       Raw data is sent to the Server.
       
-      Data Storage
-      
       Raw data is stored in server/data/raw/.
       
       Data Preprocessing
@@ -141,16 +140,15 @@ python main.py
       Performance is evaluated using metrics such as accuracy and loss.
 
 ## 🧠 Machine Learning
+## Supported tasks:
 ```
-  # Supported tasks:
-
    Classification
 
    Regression
 
    Predictive analytics
 
-   Model files are stored in:
+   Model files are stored in :
 
       server/models/
 
@@ -158,7 +156,7 @@ python main.py
 
 ## Purpose & Key Features
 ```
-  # ⭐ Purpose (Tác dụng của dự án)
+⭐ Purpose (Tác dụng của dự án)
   ```
       This project provides a complete end-to-end machine learning pipeline, helping users to:
     
@@ -173,78 +171,78 @@ python main.py
       Support academic projects, research, and real-world ML experiments
 
   ```
-  # ⭐ Key Features (Tính năng chính)
+⭐ Key Features (Tính năng chính)
   ```
     - 🔹 Client-side
     ```
-    # Automated data collection from external APIs
+    Automated data collection from external APIs
 
-    # Configurable data sources and parameters
+    Configurable data sources and parameters
 
-    # Lightweight client module
+    Lightweight client module
 
-    # REST API communication
-
-    ```
-    - 🔹 Server-side
-    ```
-    # Centralized storage for raw & processed data
-
-    # Data preprocessing:
-
-    # Cleaning
-
-    # Normalization
-
-    # Feature engineering
-
-    # Machine learning model training & evaluation
-
-    # Model persistence for reproducibility
+    REST API communication
 
     ```
-    - 🔹 Experimentation & Testing
+    🔹 Server-side
     ```
-    # Jupyter Notebook support
+    Centralized storage for raw & processed data
 
-    # Model testing and validation
+    Data preprocessing:
 
-    # Performance visualization
+    Cleaning
 
-    # Hyperparameter tuning
+    Normalization
+
+    Feature engineering
+
+    Machine learning model training & evaluation
+
+    Model persistence for reproducibility
+
+    ```
+    🔹 Experimentation & Testing
+    ```
+    Jupyter Notebook support
+
+    Model testing and validation
+
+    Performance visualization
+
+    Hyperparameter tuning
     ```
   ```
 ```
----
+
 ## 🧩 Project Value & Practical Benefits
 ```
-  # 🔍 Overall Impact
+  🔍 Overall Impact
   ```
-    # The Data Analysis & Model Pipeline bridges the gap between raw data collection and machine learning intelligence.
+    The Data Analysis & Model Pipeline bridges the gap between raw data collection and machine learning intelligence.
 
-    # It enables users to build scalable, reusable, and maintainable data systems and is suitable for:
+    It enables users to build scalable, reusable, and maintainable data systems and is suitable for:
 
-    # Students learning Data Science & Machine Learning
+    Students learning Data Science & Machine Learning
 
-    # Developers practicing Client–Server architecture
+    Developers practicing Client–Server architecture
 
-    # Researchers experimenting with ML models
+    Researchers experimenting with ML models
 
-    # ML-ready backend system prototyping
-
-  ```
-  # 🏗 Architectural Advantages
-  ```
-    # Client–Server separation
-
-    # Modular and extensible design
-
-    # Scalable data pipeline
-
-    # Clear folder structure and maintainability
+    ML-ready backend system prototyping
 
   ```
-  # 📊 Technologies Used
+  🏗 Architectural Advantages
+  ```
+    Client–Server separation
+
+    Modular and extensible design
+
+    Scalable data pipeline
+
+    Clear folder structure and maintainability
+
+  ```
+📊 Technologies Used
   ```
     🐍 Python
 
@@ -258,35 +256,35 @@ python main.py
 
     🔧 Git
   ```
-  # Future Improvements
+Future Improvements
   ```
-    - Swagger / OpenAPI documentation
+    Swagger / OpenAPI documentation
 
-    - Docker-based deployment
+    Docker-based deployment
 
-    - Scheduled data pipelines
+    Scheduled data pipelines
 
-    - Logging and monitoring
+    Logging and monitoring
 
-    - CI/CD integration
+    CI/CD integration
   ```
-  # 🤝 Contribution
+  🤝 Contribution
   ```
-    # Contributions are welcome:
+    Contributions are welcome:
 
-    # Fork the repository
+    Fork the repository
 
-    # Create a new branch
+    Create a new branch
 
-    # Commit your changes
+    Commit your changes
 
-    # Open a Pull Request
+    Open a Pull Request
   ```
-  # 📄 License
+   📄 License
   ```
-    # This project is licensed under the MIT License.
+    This project is licensed under the MIT License.
 
-    # You are free to use, modify, and distribute this project with attribution.
+    You are free to use, modify, and distribute this project with attribution.
     
   ```
 ```
