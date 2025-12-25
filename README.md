@@ -1,3 +1,4 @@
+#welcome
 # Vietnam Weather Forecast Desktop Application
 
 A modern PyQt6 desktop application with an interactive Leaflet map of Vietnam for weather forecasting.
