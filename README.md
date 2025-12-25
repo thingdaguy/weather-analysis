@@ -54,7 +54,7 @@ Python/
 ---
 🛠 Installation & Setup
 ```
-  # Prerequisites
+# Prerequisites
 
   🐍 Python 3.8+ 
 
