@@ -173,7 +173,7 @@ python main.py
   ```
 ⭐ Key Features (Tính năng chính)
   ```
-    - 🔹 Client-side
+    🔹 Client-side
     ```
     Automated data collection from external APIs
 
@@ -215,8 +215,8 @@ python main.py
 ```
 
 ## 🧩 Project Value & Practical Benefits
-```
-  🔍 Overall Impact
+
+ #### 🔍 Overall Impact
   ```
     The Data Analysis & Model Pipeline bridges the gap between raw data collection and machine learning intelligence.
 
@@ -231,7 +231,7 @@ python main.py
     ML-ready backend system prototyping
 
   ```
-  🏗 Architectural Advantages
+####  🏗 Architectural Advantages
   ```
     Client–Server separation
 
@@ -242,7 +242,7 @@ python main.py
     Clear folder structure and maintainability
 
   ```
-📊 Technologies Used
+#### 📊 Technologies Used
   ```
     🐍 Python
 
@@ -256,7 +256,7 @@ python main.py
 
     🔧 Git
   ```
-Future Improvements
+#### Future Improvements
   ```
     Swagger / OpenAPI documentation
 
@@ -268,8 +268,8 @@ Future Improvements
 
     CI/CD integration
   ```
-  🤝 Contribution
-  ```
+ #### 🤝 Contribution
+```
     Contributions are welcome:
 
     Fork the repository
@@ -279,12 +279,12 @@ Future Improvements
     Commit your changes
 
     Open a Pull Request
-  ```
-   📄 License
+```
+#### 📄 License
   ```
     This project is licensed under the MIT License.
 
     You are free to use, modify, and distribute this project with attribution.
     
   ```
-```
+
