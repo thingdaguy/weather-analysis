@@ -1,290 +1,215 @@
-# Vietnam Weather Forecast Desktop Application
+# Ứng Dụng Dự Báo Thời Tiết Việt Nam Trên Desktop
 
-A modern PyQt6 desktop application with an interactive Leaflet map of Vietnam for weather forecasting.
+Một ứng dụng desktop hiện đại sử dụng PyQt6 với bản đồ tương tác Leaflet của Việt Nam dành cho dự báo thời tiết.
 
-## Features
+## Tính Năng
 
-- Interactive Leaflet.js map displaying Vietnam
-- Click-to-select location functionality
-- Real-time coordinate display (latitude, longitude)
-- Red marker placement on map
-- Python-JavaScript communication via QWebChannel
-- Modern, clean UI design
-- Responsive and fast performance
+- Bản đồ tương tác Leaflet.js hiển thị Việt Nam
+- Chức năng chọn vị trí bằng cách click
+- Hiển thị tọa độ thời gian thực (vĩ độ, kinh độ)
+- Đặt marker đỏ trên bản đồ
+- Giao tiếp Python-JavaScript qua QWebChannel
+- Thiết kế UI hiện đại, sạch sẽ
+- Hiệu suất responsive và nhanh chóng
 
-## Project Objectives
+## Mục Tiêu Dự Án
 
-- Automate data collection from external APIs
-- Centralize data processing and storage
-- Train and evaluate machine learning models
-- Support scalable client–server architecture
+- Tự động hóa thu thập dữ liệu từ các API bên ngoài
+- Tập trung hóa xử lý và lưu trữ dữ liệu
+- Huấn luyện và đánh giá các mô hình machine learning
+- Hỗ trợ kiến trúc client-server có khả năng mở rộng
 
----
+## Tính Năng Chính
 
-## Key Features
+- 🔄 Tự động lấy dữ liệu (Phía Client)
+- 🧹 Làm sạch & tiền xử lý dữ liệu
+- 🧠 Huấn luyện mô hình Machine Learning
+- 📈 Đánh giá & xác thực mô hình
+- 💾 Lưu trữ mô hình để tái sử dụng
 
-- 🔄 Automated data fetching (Client-side)
-- 🧹 Data cleaning & preprocessing
-- 🧠 Machine Learning model training
-- 📈 Model evaluation & validation
-- 💾 Model persistence for reuse
-
-
-## System Architecture
+## Kiến Trúc Hệ Thống
 
 Client ↔ REST API ↔ Server ↔ ML Engine ↔ Data Storage
 
+text
 
+## Cấu Trúc Dự Án
 
-## 📂 Project Structure
-
-```
 Python/
-├── Client/                 # Client-side data acquisition
-│   ├── fetchApi/           # API fetching & data retrieval
-│   └── __pycache__/        # Python cache files
-├── server/                 # Backend & Machine Learning core
-│   ├── data/
-│   │   ├── raw/            # Raw, unprocessed data
-│   │   └── processed/      # Cleaned & feature-engineered data
-│   ├── models/             # Trained ML models
-│   └── test_model.ipynb    # Model testing & validation notebook
-└── README.md               # Project documentation
-```
----
-🛠 Installation & Setup
-# Prerequisites
+├── Client/ # Thu thập dữ liệu phía client
+│ ├── fetchApi/ # Lấy dữ liệu từ API
+│ └── pycache/ # File cache Python
+├── server/ # Lõi backend & Machine Learning
+│ ├── data/
+│ │ ├── raw/ # Dữ liệu thô, chưa xử lý
+│ │ └── processed/ # Dữ liệu đã làm sạch & kỹ thuật đặc trưng
+│ ├── models/ # Các mô hình ML đã huấn luyện
+│ └── test_model.ipynb # Notebook kiểm tra & xác thực mô hình
+└── README.md # Tài liệu dự án
 
-```
+text
 
-  🐍 Python 3.8+ 
+## Cài Đặt & Thiết Lập
 
-  🔧 Git
+### Yêu Cầu Tiên Quyết
 
-  📒 Jupyter Notebook (optional)
+- 🐍 Python 3.8+
+- 🔧 Git
+- 📒 Jupyter Notebook (tùy chọn)
 
-````
----
-## Step 1: Clone the Repository
+### Bước 1: Clone Repository
 
-python -m venv venv
+git clone [URL repository] # Thay bằng URL thực tế
+cd [tên thư mục dự án]
 
-## Windows
-.\venv\Scripts\activate
+text
 
-## macOS / Linux
-
-source venv/bin/activate
-
----
-
-## Step 2: Environment Setup
+### Bước 2: Thiết Lập Môi Trường Ảo
 
 python -m venv venv
 
-## Windows
+text
 
+**Windows:**
 .\venv\Scripts\activate
 
-## macOS / Linux
+text
 
+**macOS / Linux:**
 source venv/bin/activate
 
----
+text
 
-## Step 3: Install Dependencies
+### Bước 3: Cài Đặt Các Thư Viện
 
 pip install -r requirements.txt
 
----
+text
 
-## Step 4: Run the System
-```
-Start Server (Backend & ML Engine)
+### Bước 4: Chạy Hệ Thống
+
+**Khởi Động Server (Backend & ML Engine):**
 cd server
 python ml_api.py
-```
 
----
+text
 
-```
-Start Client (Data Acquisition)
+**Khởi Động Client (Thu Thập Dữ Liệu):**
 cd Client
 python main.py
-```
----
-## ⚙️ System Workflow
 
-      Data Collection
-      
-      Client fetches data from external APIs.
-      
-      Raw data is sent to the Server.
-      
-      Raw data is stored in server/data/raw/.
-      
-      Data Preprocessing
-      
-      Cleaning, normalization, and feature engineering.
-      
-      Processed data is saved in server/data/processed/.
-      
-      Model Training
-      
-      Models are trained using processed data.
-      
-      Trained models are saved for reuse.
-      
-      Model Evaluation
-      
-      Performance is evaluated using metrics such as accuracy and loss.
+text
 
-## 🧠 Machine Learning
-## Supported tasks:
-```
-   Classification
+## Quy Trình Hoạt Động Hệ Thống
 
-   Regression
+### Thu Thập Dữ Liệu
 
-   Predictive analytics
+1. Client lấy dữ liệu từ các API bên ngoài
+2. Dữ liệu thô được gửi đến Server
+3. Dữ liệu thô được lưu trong `server/data/raw/`
 
-   Model files are stored in :
+### Tiền Xử Lý Dữ Liệu
 
-      server/models/
+1. Làm sạch, chuẩn hóa và kỹ thuật đặc trưng
+2. Dữ liệu đã xử lý được lưu trong `server/data/processed/`
 
-```
+### Huấn Luyện Mô Hình
 
-## Purpose & Key Features
-```
-⭐ Purpose (Tác dụng của dự án)
-  ```
-      This project provides a complete end-to-end machine learning pipeline, helping users to:
-    
-      Automate data collection, processing, and analysis
-    
-      Reduce manual effort in data handling and model training
-    
-      Standardize ML workflows for learning and experimentation
-    
-      Serve as a foundation for data-driven applications
-    
-      Support academic projects, research, and real-world ML experiments
+1. Huấn luyện mô hình sử dụng dữ liệu đã xử lý
+2. Các mô hình đã huấn luyện được lưu để tái sử dụng
 
-  ```
-⭐ Key Features (Tính năng chính)
-  ```
-    🔹 Client-side
-    ```
-    Automated data collection from external APIs
+### Đánh Giá Mô Hình
 
-    Configurable data sources and parameters
+- Đánh giá hiệu suất bằng các chỉ số như độ chính xác và loss
 
-    Lightweight client module
+## Machine Learning
 
-    REST API communication
+### Các Nhiệm Vụ Hỗ Trợ
 
-    ```
-    🔹 Server-side
-    ```
-    Centralized storage for raw & processed data
+- Phân loại (Classification)
+- Hồi quy (Regression)
+- Phân tích dự đoán (Predictive analytics)
 
-    Data preprocessing:
+**Lưu trữ mô hình:** `server/models/`
 
-    Cleaning
+## Mục Đích & Tính Năng Chính
 
-    Normalization
+### Mục Đích Dự Án
 
-    Feature engineering
+Dự án này cung cấp một pipeline machine learning end-to-end hoàn chỉnh, giúp người dùng:
 
-    Machine learning model training & evaluation
+- Tự động hóa thu thập, xử lý và phân tích dữ liệu
+- Giảm nỗ lực thủ công trong xử lý dữ liệu và huấn luyện mô hình
+- Chuẩn hóa quy trình ML để học tập và thử nghiệm
+- Làm nền tảng cho các ứng dụng dựa trên dữ liệu
+- Hỗ trợ dự án học thuật, nghiên cứu và thí nghiệm ML thực tế
 
-    Model persistence for reproducibility
+### Phía Client
 
-    ```
-    🔹 Experimentation & Testing
-    ```
-    Jupyter Notebook support
+- Tự động thu thập dữ liệu từ các API bên ngoài
+- Cấu hình nguồn dữ liệu và tham số linh hoạt
+- Module client nhẹ
+- Giao tiếp REST API
 
-    Model testing and validation
+### Phía Server
 
-    Performance visualization
+- Lưu trữ tập trung cho dữ liệu thô & đã xử lý
+- Tiền xử lý dữ liệu: Làm sạch, Chuẩn hóa, Kỹ thuật đặc trưng
+- Huấn luyện & đánh giá mô hình machine learning
+- Lưu trữ mô hình để tái lập
 
-    Hyperparameter tuning
-    ```
-  ```
-```
+### Thử Nghiệm & Kiểm Tra
 
-## 🧩 Project Value & Practical Benefits
+- Hỗ trợ Jupyter Notebook
+- Kiểm tra và xác thực mô hình
+- Trực quan hóa hiệu suất
+- Tinh chỉnh siêu tham số
 
- #### 🔍 Overall Impact
-  ```
-    The Data Analysis & Model Pipeline bridges the gap between raw data collection and machine learning intelligence.
+## Giá Trị Dự Án & Lợi Ích Thực Tế
 
-    It enables users to build scalable, reusable, and maintainable data systems and is suitable for:
+### Tác Động Tổng Thể
 
-    Students learning Data Science & Machine Learning
+Pipeline Phân Tích Dữ Liệu & Mô Hình bắc cầu khoảng cách giữa thu thập dữ liệu thô và trí tuệ machine learning. Nó cho phép người dùng xây dựng hệ thống dữ liệu có khả năng mở rộng, tái sử dụng và dễ bảo trì, phù hợp cho:
 
-    Developers practicing Client–Server architecture
+- Sinh viên học Data Science & Machine Learning
+- Lập trình viên thực hành kiến trúc Client–Server
+- Nhà nghiên cứu thử nghiệm mô hình ML
+- Nguyên mẫu hệ thống backend sẵn sàng cho ML
 
-    Researchers experimenting with ML models
+### Ưu Điểm Kiến Trúc
 
-    ML-ready backend system prototyping
+- Tách biệt Client–Server
+- Thiết kế modular và dễ mở rộng
+- Pipeline dữ liệu có khả năng mở rộng
+- Cấu trúc thư mục rõ ràng và dễ bảo trì
 
-  ```
-####  🏗 Architectural Advantages
-  ```
-    Client–Server separation
+## Công Nghệ Sử Dụng
 
-    Modular and extensible design
+- 🐍 Python
+- 📦 Pandas / NumPy
+- 🤖 Scikit-learn / TensorFlow / PyTorch
+- 📒 Jupyter Notebook
+- 🌐 REST API
+- 🔧 Git
 
-    Scalable data pipeline
+## Cải Tiến Tương Lai
 
-    Clear folder structure and maintainability
+- Tài liệu Swagger / OpenAPI
+- Triển khai dựa trên Docker
+- Pipeline dữ liệu theo lịch trình
+- Logging và monitoring
+- Tích hợp CI/CD
 
-  ```
-#### 📊 Technologies Used
-  ```
-    🐍 Python
+## Đóng Góp
 
-    📦 Pandas / NumPy
+Các đóng góp được hoan nghênh:
 
-    🤖 Scikit-learn / TensorFlow / PyTorch
+1. Fork repository
+2. Tạo branch mới
+3. Commit thay đổi
+4. Mở Pull Request
 
-    📒 Jupyter Notebook
+## Giấy Phép
 
-    🌐 REST API
-
-    🔧 Git
-  ```
-#### Future Improvements
-  ```
-    Swagger / OpenAPI documentation
-
-    Docker-based deployment
-
-    Scheduled data pipelines
-
-    Logging and monitoring
-
-    CI/CD integration
-  ```
- #### 🤝 Contribution
-```
-    Contributions are welcome:
-
-    Fork the repository
-
-    Create a new branch
-
-    Commit your changes
-
-    Open a Pull Request
-```
-#### 📄 License
-  ```
-    This project is licensed under the MIT License.
-
-    You are free to use, modify, and distribute this project with attribution.
-    
-  ```
-
+Dự án này được cấp phép theo MIT License.
+Bạn tự do sử dụng, sửa đổi và phân phối dự án với ghi công.
