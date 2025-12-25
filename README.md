@@ -258,17 +258,17 @@ python main.py
 
     🔧 Git
   ```
-  # 🚀 Future Improvements
+  # Future Improvements
   ```
-    # Swagger / OpenAPI documentation
+    - Swagger / OpenAPI documentation
 
-    # Docker-based deployment
+    - Docker-based deployment
 
-    # Scheduled data pipelines
+    - Scheduled data pipelines
 
-    # Logging and monitoring
+    - Logging and monitoring
 
-    # CI/CD integration
+    - CI/CD integration
   ```
   # 🤝 Contribution
   ```
