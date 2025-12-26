@@ -17,7 +17,6 @@ from PyQt6.QtWidgets import (
 
 plt.style.use("cyberpunk")
 
-# ... (Giữ nguyên class ProvinceAnalysisWindow) ...
 class ProvinceAnalysisWindow(QDialog):
     """Placeholder window for province click."""
     def __init__(self, province_name: str, parent=None):
