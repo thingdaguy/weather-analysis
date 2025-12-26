@@ -67,7 +67,7 @@ Python/
 ---
 ## Step 1: Clone the Repository
 
-python -m venv venv
+git clone https://github.com/thingdaguy/weather-analysis.git
 
 ## Windows
 .\venv\Scripts\activate
