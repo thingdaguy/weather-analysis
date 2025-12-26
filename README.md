@@ -325,6 +325,7 @@ text
 
 ## Cấu Trúc Dự Án
 
+```
 Python/
 ├── Client/ # Thu thập dữ liệu phía client
 │ ├── fetchApi/ # Lấy dữ liệu từ API
@@ -336,7 +337,7 @@ Python/
 │ ├── models/ # Các mô hình ML đã huấn luyện
 │ └── test_model.ipynb # Notebook kiểm tra & xác thực mô hình
 └── README.md # Tài liệu dự án
-
+```
 text
 
 ## Cài Đặt & Thiết Lập
