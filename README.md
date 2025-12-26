@@ -337,8 +337,8 @@ Python/
 │ ├── models/ # Các mô hình ML đã huấn luyện
 │ └── test_model.ipynb # Notebook kiểm tra & xác thực mô hình
 └── README.md # Tài liệu dự án
-```
 text
+```
 
 ## Cài Đặt & Thiết Lập
 
