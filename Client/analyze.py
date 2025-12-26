@@ -79,7 +79,7 @@ class CoordinateAnalysisWindow(QDialog):
         self.prediction_frame.setVisible(False) # Ẩn đi cho đến khi có kết quả
         pred_layout = QVBoxLayout()
         
-        self.lbl_pred_title = QLabel(" Dự đoán thời tiết")
+        self.lbl_pred_title = QLabel("Phân loại thời tiết")
         self.lbl_pred_title.setStyleSheet("color: #a29bfe; font-weight: bold; font-size: 14px;")
         self.lbl_pred_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
