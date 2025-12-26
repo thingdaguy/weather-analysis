@@ -40,7 +40,7 @@ Client ↔ REST API ↔ Server ↔ ML Engine ↔ Data Storage
 
 ```
 Python/
-├── Client/                 # Client-side data acquisition
+├── client/                 # client-side data acquisition
 │   ├── fetchApi/           # API fetching & data retrieval
 │   └── __pycache__/        # Python cache files
 ├── server/                 # Backend & Machine Learning core
@@ -108,8 +108,8 @@ python ml_api.py
 ---
 
 ```
-Start Client (Data Acquisition)
-cd Client
+Start client (Data Acquisition)
+cd client
 python main.py
 ```
 ---
