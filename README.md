@@ -67,14 +67,7 @@ Python/
 ---
 ## Step 1: Clone the Repository
 
-python -m venv venv
-
-## Windows
-.\venv\Scripts\activate
-
-## macOS / Linux
-
-source venv/bin/activate
+git clone https://github.com/thingdaguy/weather-analysis
 
 ---
 
@@ -156,7 +149,7 @@ python main.py
 
 ## Purpose & Key Features
 ```
-⭐ Purpose (Tác dụng của dự án)
+⭐ Purpose
   ```
       This project provides a complete end-to-end machine learning pipeline, helping users to:
     
@@ -171,7 +164,7 @@ python main.py
       Support academic projects, research, and real-world ML experiments
 
   ```
-⭐ Key Features (Tính năng chính)
+⭐ Key Features 
   ```
     🔹 Client-side
     ```
@@ -256,18 +249,7 @@ python main.py
 
     🔧 Git
   ```
-#### Future Improvements
-  ```
-    Swagger / OpenAPI documentation
 
-    Docker-based deployment
-
-    Scheduled data pipelines
-
-    Logging and monitoring
-
-    CI/CD integration
-  ```
  #### 🤝 Contribution
 ```
     Contributions are welcome:
