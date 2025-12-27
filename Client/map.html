@@ -61,13 +61,11 @@
         const bounds = L.latLngBounds([8.1, 101.5], [23.5, 111.0]);
 
         const map = L.map("map", {
-          // Shift Vietnam slightly LEFT to reserve right-side panel space
-          center: [16.0, 110.5],
-          zoom: 6,
-          minZoom: 3,
+          center: [20, 0], // nhìn toàn cầu
+          zoom: 4, // zoom thấp để thấy Trái Đất
+          minZoom: 4,
           maxZoom: 18,
-          maxBounds: bounds, // ⬅️ GIỚI HẠN BẢN ĐỒ
-          maxBoundsViscosity: 1.0,
+          worldCopyJump: true, // kéo vô hạn trái/phải
           preferCanvas: true,
         });
 
@@ -119,48 +117,48 @@
         }
 
         map.on("click", async (e) => {
-            const lat = +e.latlng.lat.toFixed(4);
-            const lng = +e.latlng.lng.toFixed(4);
+          const lat = +e.latlng.lat.toFixed(4);
+          const lng = +e.latlng.lng.toFixed(4);
 
-            if (marker) map.removeLayer(marker);
-            marker = L.marker([lat, lng], { icon: redIcon }).addTo(map);
+          if (marker) map.removeLayer(marker);
+          marker = L.marker([lat, lng], { icon: redIcon }).addTo(map);
 
-            const coordsEl = document.getElementById("coords");
+          const coordsEl = document.getElementById("coords");
 
-            // 1️⃣ LOADING
-            coordsEl.innerHTML = `📍 ${lat}, ${lng}<br>⏳ Đang lấy dữ liệu...`;
+          // 1️⃣ LOADING
+          coordsEl.innerHTML = `📍 ${lat}, ${lng}<br>⏳ Đang lấy dữ liệu...`;
 
-            const result = await getLocationWeather(lat, lng);
+          const result = await getLocationWeather(lat, lng);
 
-            let html = `<b>📍 ${lat}, ${lng}</b><hr>`;
+          let html = `<b>📍 ${lat}, ${lng}</b><hr>`;
 
-            // 2️⃣ FAIL
-            if (!result || !result.weather) {
-                coordsEl.innerHTML = `❌ Không lấy được dữ liệu`;
-                marker.bindPopup(html + "❌ Không lấy được dữ liệu").openPopup();
-                return;
-            }
+          // 2️⃣ FAIL
+          if (!result || !result.weather) {
+            coordsEl.innerHTML = `❌ Không lấy được dữ liệu`;
+            marker.bindPopup(html + "❌ Không lấy được dữ liệu").openPopup();
+            return;
+          }
 
-            const { address, weather } = result;
+          const { address, weather } = result;
 
-            // 3️⃣ RESET coords (❗ QUAN TRỌNG)
-            coordsEl.innerHTML = "";
+          // 3️⃣ RESET coords (❗ QUAN TRỌNG)
+          coordsEl.innerHTML = "";
 
-            // 📍 ĐỊA CHỈ
-            if (address?.full) {
-                html += `
+          // 📍 ĐỊA CHỈ
+          if (address?.full) {
+            html += `
                 🏠 <b>Địa chỉ</b><br>
                 ${address.full}<hr>
                 `;
-            }
+          }
 
-            const locationText =
-                address?.city || address?.province || `${lat}, ${lng}`;
+          const locationText =
+            address?.city || address?.province || `${lat}, ${lng}`;
 
-            coordsEl.innerHTML = `📍 ${locationText}`;
+          coordsEl.innerHTML = `📍 ${locationText}`;
 
-            // 🌤️ THỜI TIẾT
-            html += `
+          // 🌤️ THỜI TIẾT
+          html += `
                 🌡️ ${weather.temp} °C<br>
                 🔺 Max: ${weather.temp_max} °C<br>
                 🔻 Min: ${weather.temp_min} °C<br>
@@ -168,16 +166,15 @@
                 🌬️ ${weather.wind} km/h
             `;
 
-            coordsEl.innerHTML += ` | 🌡️ ${weather.temp}°C | 🌬️ ${weather.wind} km/h`;
+          coordsEl.innerHTML += ` | 🌡️ ${weather.temp}°C | 🌬️ ${weather.wind} km/h`;
 
-            marker.bindPopup(html).openPopup();
+          marker.bindPopup(html).openPopup();
 
-            // 🚀 PYQT
-            if (window.mapBridge) {
-                window.mapBridge.on_map_click(lat, lng, JSON.stringify(result));
-            }
-            });
-
+          // 🚀 PYQT
+          if (window.mapBridge) {
+            window.mapBridge.on_map_click(lat, lng, JSON.stringify(result));
+          }
+        });
       });
     </script>
   </body>
