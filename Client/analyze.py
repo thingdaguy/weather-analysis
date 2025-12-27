@@ -145,7 +145,6 @@ class CoordinateAnalysisWindow(QDialog):
             current_wind = f"{w.get('wind', 0)} km/h"
             current_rain = f"{w.get('precipitation', 0)} mm"
         
-        self._update_summary_cards(current_wind, current_temp, current_rain)
 
         # --- Fetch History & Predict ---
         try:
@@ -167,12 +166,11 @@ class CoordinateAnalysisWindow(QDialog):
             # Gọi API
             self._call_ml_api(avg_data)
 
-            if not self.weather_data:
-                 self._update_summary_cards(
-                     f"{avg_data['wind_speed']:.1f} km/h (Avg)",
-                     f"{df['tmean'].mean():.1f} °C (Avg)",
-                     f"{avg_data['rain']:.1f} mm (Avg)"
-                 )
+            self._update_summary_cards(
+                f"{avg_data['wind_speed']:.1f} km/h",
+                f"{df['tmean'].mean():.1f} °C",
+                f"{avg_data['rain']:.1f} mm"
+            )
 
         except Exception as exc:
             print(f"Chart/API Error: {exc}")
