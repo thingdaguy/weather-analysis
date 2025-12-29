@@ -1,3 +1,4 @@
+
 async function fetchAddress(lat, lng) {
   const url =
     `https://nominatim.openstreetmap.org/reverse` +
@@ -17,7 +18,6 @@ async function fetchAddress(lat, lng) {
     const addr = data.address;
     const result = {};
 
-    // 👉 CHỈ THÊM FIELD KHI CÓ GIÁ TRỊ
     if (data.display_name) result.full = data.display_name;
 
     if (addr.state) result.province = addr.state;
@@ -30,7 +30,6 @@ async function fetchAddress(lat, lng) {
 
     if (addr.road) result.road = addr.road;
 
-    // ❌ nếu object rỗng → coi như không có địa chỉ
     if (Object.keys(result).length === 0) return null;
 
     return result;
@@ -71,7 +70,6 @@ async function fetchWeather(lat, lng) {
     return null;
   }
 }
-
 
 async function getLocationWeather(lat, lng) {
   const [address, weather] = await Promise.all([

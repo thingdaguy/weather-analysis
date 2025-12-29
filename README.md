@@ -326,19 +326,38 @@ text
 ## Cấu Trúc Dự Án
 
 ```
-Python/
-├── Client/ # Thu thập dữ liệu phía client
-│ ├── fetchApi/ # Lấy dữ liệu từ API
-│ └── pycache/ # File cache Python
-├── server/ # Lõi backend & Machine Learning
-│ ├── data/
-│ │ ├── raw/ # Dữ liệu thô, chưa xử lý
-│ │ └── processed/ # Dữ liệu đã làm sạch & kỹ thuật đặc trưng
-│ ├── models/ # Các mô hình ML đã huấn luyện
-│ └── test_model.ipynb # Notebook kiểm tra & xác thực mô hình
-└── README.md # Tài liệu dự án
-text
-```
+weather-analysis/
+├── README.md
+├── requirements.txt
+├── .gitignore
+│
+├── client/
+│   ├── __pycache__/
+│   │
+│   ├── fetchApi/
+│   │   └── fetchAddressWeather.js
+│   │
+│   ├── main.py
+│   ├── map_view.py
+│   ├── analyze.py
+│   └── map.html
+│
+├── server/
+    ├── data/
+    │   ├── raw/
+    │   │   └── vietnam-weather.csv
+    │   └── processed/
+    │       └── vietnam_weather_processed.csv
+    │
+    ├── models/
+    │   ├── weather_kmeans.joblib
+    │   └── weather_scaler.joblib
+    │
+    ├── ml_api.py
+    ├── train.ipynb
+    ├── test_model.ipynb
+    └── setup.md
+
 
 ## Cài Đặt & Thiết Lập
 

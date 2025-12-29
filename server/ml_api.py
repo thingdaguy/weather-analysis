@@ -35,28 +35,22 @@ cluster_map = {
 def predict():
     if not scaler or not kmeans:
         return jsonify({"error": "Model not loaded"}), 500
-
     try:
-        # 1. Nhận dữ liệu JSON từ frontend
         data = request.json
-        # Dữ liệu mong đợi: {"t_max": 30, "t_min": 25, "wind_speed": 10, "rain": 5}
-        
-        # 2. Tạo DataFrame đúng chuẩn input của model lúc train
+       
         input_df = pd.DataFrame([data])
         
-        # Đảm bảo thứ tự cột đúng như lúc train (quan trọng)
-        # Nếu file test_model.ipynb của bạn dùng thứ tự: t_max, t_min, wind_speed, rain
         input_df = input_df[["t_max", "t_min", "wind_speed", "rain"]]
 
-        # 3. Scale dữ liệu
+        # Scale dữ liệu
         X_scaled = scaler.transform(input_df)
 
-        # 4. Dự đoán
+        # Dự đoán
         cluster_id = kmeans.predict(X_scaled)[0]
         result_info = cluster_map.get(int(cluster_id), {"label": "Unknown", "color": "#fff"})
         print(cluster_id, result_info)
 
-        # 5. Trả về kết quả
+        #T rả về kết quả
         return jsonify({
             "status": "success",
             "cluster_id": int(cluster_id),

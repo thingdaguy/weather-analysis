@@ -176,6 +176,7 @@ class CoordinateAnalysisWindow(QDialog):
             print(f"Chart/API Error: {exc}")
 
     # --- [NEW] HÀM GỌI API ---
+
     def _call_ml_api(self, data):
         """Gửi dữ liệu sang Python Backend (Flask) để dự đoán"""
         try:
@@ -234,6 +235,7 @@ class CoordinateAnalysisWindow(QDialog):
         return card
 
     # ... (Giữ nguyên các hàm _fetch_weather_history, _plot... bên dưới) ...
+
     def _fetch_weather_history(self) -> pd.DataFrame:
         end = datetime.date.today() - datetime.timedelta(days=1)
         start = end - datetime.timedelta(days=29)
