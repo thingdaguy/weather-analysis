@@ -1,8 +1,11 @@
 <a id="readme-top"></a>
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-<br />
+<div align="center">
+
+[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url]
+
+</div>
+
 <div align="center">
   <h1 align="center">Vietnam Weather Analysis Desktop App</h1>
 
